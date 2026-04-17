@@ -32,6 +32,9 @@ let liveContext = {
     connectivity: navigator.onLine ? 'online' : 'offline'
 };
 
+// Weather API Config (Open-Meteo - free, no API key needed)
+const WEATHER_API = 'https://api-meteo.open-meteo.com/v1/forecast';
+
 // DOM Elements
 const messagesArea = document.getElementById('messagesArea');
 const messageInput = document.getElementById('messageInput');
@@ -104,6 +107,40 @@ function saveTripMemory() {
     localStorage.setItem('tripMemory', JSON.stringify(tripMemory));
 }
 
+// Fetch real weather data from Open-Meteo API (free, no API key)
+async function fetchWeatherData() {
+    if (!liveContext.location || liveContext.connectivity === 'offline') {
+        console.log('Weather: Location unavailable or offline');
+        return null;
+    }
+
+    try {
+        const { lat, lng } = liveContext.location;
+        const url = `${WEATHER_API}?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=auto`;
+        
+        const response = await fetch(url);
+        if (!response.ok) return null;
+        
+        const data = await response.json();
+        const current = data.current;
+        
+        liveContext.weather = {
+            temperature: current.temperature_2m,
+            humidity: current.relative_humidity_2m,
+            weatherCode: current.weather_code,
+            windSpeed: current.wind_speed_10m,
+            timezone: data.timezone,
+            timestamp: new Date().toISOString()
+        };
+        
+        console.log('✓ Weather fetched:', liveContext.weather);
+        return liveContext.weather;
+    } catch (error) {
+        console.warn('Could not fetch weather:', error);
+        return null;
+    }
+}
+
 function attachEventListeners() {
     sendBtn.addEventListener('click', sendMessage);
     messageInput.addEventListener('keypress', (e) => {
@@ -134,6 +171,10 @@ function initializeSensors() {
                 };
                 liveContext.location = userLocation;
                 console.log('Location acquired:', userLocation);
+                
+                // Fetch weather for this location
+                fetchWeatherData();
+                
                 updateHeaderStatus();
             },
             (error) => {
@@ -143,6 +184,13 @@ function initializeSensors() {
             { timeout: 10000, maximumAge: 300000 }
         );
     }
+    
+    // Refresh weather every 10 minutes if connected
+    setInterval(() => {
+        if (liveContext.connectivity === 'online' && liveContext.location) {
+            fetchWeatherData();
+        }
+    }, 600000);
 
     // Watch battery status
     if ('getBattery' in navigator) {
@@ -222,6 +270,37 @@ function updateHeaderStatus() {
     
     headerStatus.title = statusText;
     headerStatus.style.color = color;
+}
+
+// Convert WMO weather code to readable description
+function getWeatherDescription(code) {
+    const weatherCodes = {
+        0: 'Clear sky',
+        1: 'Mainly clear',
+        2: 'Partly cloudy',
+        3: 'Overcast',
+        45: 'Foggy',
+        48: 'Frosted fog',
+        51: 'Light drizzle',
+        53: 'Moderate drizzle',
+        55: 'Dense drizzle',
+        61: 'Slight rain',
+        63: 'Moderate rain',
+        65: 'Heavy rain',
+        71: 'Slight snow',
+        73: 'Moderate snow',
+        75: 'Heavy snow',
+        77: 'Snow grains',
+        80: 'Slight rain showers',
+        81: 'Moderate rain showers',
+        82: 'Violent rain showers',
+        85: 'Slight snow showers',
+        86: 'Heavy snow showers',
+        95: 'Thunderstorm',
+        96: 'Thunderstorm with hail',
+        99: 'Thunderstorm with heavy hail'
+    };
+    return weatherCodes[code] || 'Unknown weather';
 }
 
 async function sendMessage() {
@@ -602,6 +681,19 @@ async function callSpecialist(agentName, userMessage, responseContainer, thinkin
     prompt += '═══════════════════════════════════════════════════════════════\n';
     prompt += 'CONTEXT\n';
     prompt += '═══════════════════════════════════════════════════════════════\n\n';
+    
+    if (liveContext.location) {
+        prompt += `Location: ${liveContext.location.lat.toFixed(4)}, ${liveContext.location.lng.toFixed(4)}\n`;
+    }
+    
+    if (liveContext.weather) {
+        const weather = liveContext.weather;
+        const weatherDesc = getWeatherDescription(weather.weatherCode);
+        prompt += `Weather: ${weather.temperature}°C, ${weatherDesc}, humidity ${weather.humidity}%, wind ${weather.windSpeed} km/h\n`;
+    }
+    
+    prompt += `Time: ${liveContext.time.toLocaleString()}\n`;
+    prompt += `Connectivity: ${liveContext.connectivity}\n\n`;
     
     if (tripMemory.destinations.length > 0) {
         prompt += `Trip Destinations: ${tripMemory.destinations.map(d => d.name).join(' → ')}\n`;
