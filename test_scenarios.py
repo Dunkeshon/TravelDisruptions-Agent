@@ -74,7 +74,7 @@ JSON:"""
                 "temperature": 0.2,
                 "top_p": 0.95
             },
-            timeout=30
+            timeout=120
         )
         
         if response.status_code == 200:
