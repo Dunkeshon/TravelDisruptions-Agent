@@ -52,6 +52,15 @@ html, body {
     letter-spacing: -0.3px;
 }
 
+.header-status {
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.header-status:hover {
+    opacity: 0.7;
+}
+
 .header svg {
     color: #18181b;
 }
@@ -202,6 +211,74 @@ html, body {
     animation-delay: 0.4s;
 }
 
+/* Thinking Message Styles */
+.message.thinking {
+    align-items: flex-start;
+}
+
+.thinking-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #999;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    padding: 0 4px;
+}
+
+.thinking-pulse {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #d4a574;
+    border-radius: 50%;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+.thinking-icon {
+    font-size: 11px;
+    font-weight: 500;
+    color: #8b7355;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.thinking-response-container {
+    padding: 0;
+    border-radius: 0;
+    max-width: 100%;
+    word-wrap: break-word;
+    line-height: 1.4;
+    font-size: 14px;
+    background: transparent;
+    color: inherit;
+    border: none;
+    border-left: none;
+    min-height: auto;
+}
+
+/* Styled only when showing thinking blocks in final response */
+.message.system .thinking-block {
+    background: #f0ebe5;
+    border: 1px solid #d4ccc0;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
 @keyframes typing {
     0%, 60%, 100% {
         opacity: 0.3;
@@ -332,6 +409,180 @@ html, body {
 
 .nav-item.active {
     color: #d32f2f;
+}
+
+/* Markdown Styling */
+.message-content strong,
+.message-content b {
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.message-content em,
+.message-content i {
+    font-style: italic;
+    color: #555;
+}
+
+.message-content code {
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: #333;
+}
+
+.message-content pre {
+    background: #f5f5f5;
+    padding: 10px;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 8px 0;
+    font-size: 12px;
+    line-height: 1.4;
+    border-left: 3px solid #999;
+}
+
+.message-content pre code {
+    background: none;
+    padding: 0;
+    color: #333;
+}
+
+.message-content ul,
+.message-content ol {
+    margin: 8px 0;
+    padding-left: 24px;
+}
+
+.message-content li {
+    margin: 4px 0;
+}
+
+.message-content h1,
+.message-content h2,
+.message-content h3,
+.message-content h4,
+.message-content h5,
+.message-content h6 {
+    font-weight: 600;
+    margin: 12px 0 4px 0;
+    color: #1a1a1a;
+}
+
+.message-content h1 { font-size: 18px; }
+.message-content h2 { font-size: 16px; }
+.message-content h3 { font-size: 15px; }
+
+.message-content hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 12px 0;
+}
+
+.message-content blockquote {
+    border-left: 3px solid #d32f2f;
+    padding-left: 12px;
+    margin: 8px 0;
+    color: #666;
+    font-style: italic;
+}
+
+.message-content a {
+    color: #d32f2f;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Thinking Block Styles */
+.thinking-block {
+    background: #f0ebe5;
+    border: 1px solid #d4ccc0;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.thinking-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    cursor: pointer;
+    background: #f9f5f0;
+    border-bottom: 1px solid #e5ddd0;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.thinking-header:hover {
+    background: #f5f0e9;
+}
+
+.thinking-toggle {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    color: #8b7355;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.thinking-block.collapsed .thinking-toggle {
+    transform: rotate(-90deg);
+}
+
+.thinking-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #8b7355;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    flex: 1;
+}
+
+.thinking-content {
+    padding: 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #666;
+    max-height: 300px;
+    overflow-y: auto;
+    display: block;
+}
+
+.thinking-block.collapsed .thinking-content {
+    display: none;
+}
+
+.thinking-content p {
+    margin: 8px 0;
+}
+
+.thinking-content strong {
+    color: #555;
+    font-weight: 600;
+}
+
+/* Response separator */
+.response-separator {
+    height: 1px;
+    background: linear-gradient(to right, transparent, #ddd, transparent);
+    margin: 12px 0;
+}
+
+.response-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: #999;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-align: center;
+    padding: 4px 0;
 }
 
 /* Responsive Design */

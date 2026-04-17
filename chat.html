@@ -16,10 +16,12 @@
                 </svg>
                 <span class="header-title">Wayra</span>
             </div>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <circle cx="10" cy="10" r="8" stroke="#18181B" stroke-width="2"/>
-                <circle cx="10" cy="10" r="2" fill="#18181B"/>
-            </svg>
+            <div class="header-status" id="headerStatus" title="Phone status">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="8" stroke="#18181B" stroke-width="2"/>
+                    <circle cx="10" cy="10" r="2" fill="#18181B"/>
+                </svg>
+            </div>
         </div>
 
         <!-- Chat Container -->
@@ -97,6 +99,16 @@
         </div>
     </div>
 
+    <!-- Markdown rendering library -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // Configure marked for better formatting
+        marked.setOptions({
+            breaks: true,
+            gfm: true
+        });
+    </script>
+    
     <script src="app.js"></script>
 </body>
 </html>
