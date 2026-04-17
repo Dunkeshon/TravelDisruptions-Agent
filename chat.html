@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wayra - Travel Companion</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="phone">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <svg width="18" height="12" viewBox="0 0 18 12" fill="none">
+                    <path d="M1 6h16M11 1l5 5-5 5" stroke="#18181B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="header-title">Wayra</span>
+            </div>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="8" stroke="#18181B" stroke-width="2"/>
+                <circle cx="10" cy="10" r="2" fill="#18181B"/>
+            </svg>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="chat-container">
+            <!-- Welcome Section -->
+            <div class="welcome-section">
+                <div class="agent-status">AGENT 01 // ACTIVE</div>
+                <h1 class="agent-name">Wayra</h1>
+                <div class="divider"></div>
+            </div>
+
+            <!-- Messages Area -->
+            <div class="messages-area" id="messagesArea">
+                <!-- Messages will be inserted here -->
+            </div>
+
+            <!-- Loading Indicator -->
+            <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="config-bar">
+                <input 
+                    type="text" 
+                    id="ollamaHost" 
+                    placeholder="http://localhost:11434" 
+                    class="config-input"
+                    title="Ollama API host"
+                >
+            </div>
+            <div class="input-wrapper">
+                <input 
+                    type="text" 
+                    id="messageInput" 
+                    placeholder="Ask about gear, trails, or logistics..." 
+                    class="message-input"
+                    autocomplete="off"
+                >
+                <button id="sendBtn" class="send-button" title="Send message">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M2 10l16-8-16 16v-8H8v-4H2z" fill="currentColor"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-item" title="Explore">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>Explore</span>
+            </button>
+            <button class="nav-item active" title="Chat">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                </svg>
+                <span>Chat</span>
+            </button>
+            <button class="nav-item" title="Journal">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <rect x="4" y="2" width="16" height="20" rx="1" stroke="currentColor" stroke-width="2"/>
+                    <line x1="8" y1="6" x2="16" y2="6" stroke="currentColor" stroke-width="2"/>
+                    <line x1="8" y1="10" x2="16" y2="10" stroke="currentColor" stroke-width="2"/>
+                    <line x1="8" y1="14" x2="16" y2="14" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>Journal</span>
+            </button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
