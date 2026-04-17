@@ -230,12 +230,14 @@ def test_all_scenarios():
 def save_report(report):
     """Save report to JSON and formatted text file"""
     # JSON Report
-    with open("TEST_REPORT.json", "w") as f:
+    import os
+    os.makedirs("../reports", exist_ok=True)
+    with open("../reports/TEST_REPORT.json", "w") as f:
         json.dump(report, f, indent=2)
-    print(f"\n✓ JSON report saved to TEST_REPORT.json")
+    print(f"\n✓ JSON report saved to ../reports/TEST_REPORT.json")
     
     # Formatted Text Report
-    with open("TEST_REPORT.md", "w") as f:
+    with open("../reports/TEST_REPORT.md", "w") as f:
         f.write("# Wayra Travel Companion - Test Report\n\n")
         f.write(f"**Generated**: {report['timestamp']}\n\n")
         f.write(f"**Model**: {report['model']}\n\n")
@@ -277,7 +279,7 @@ def save_report(report):
             f.write(f"{test['analysis']}\n\n")
             f.write("---\n\n")
     
-    print(f"✓ Markdown report saved to TEST_REPORT.md")
+    print(f"✓ Markdown report saved to ../reports/TEST_REPORT.md")
 
 
 if __name__ == "__main__":
@@ -294,8 +296,8 @@ if __name__ == "__main__":
         print(f"  Avg Specialist Time: {report['summary']['average_specialist_time']}s")
         print(f"  Avg Total Time: {report['summary']['average_total_time']}s")
         print(f"\nReports saved:")
-        print(f"  - TEST_REPORT.json")
-        print(f"  - TEST_REPORT.md")
+        print(f"  - ../reports/TEST_REPORT.json")
+        print(f"  - ../reports/TEST_REPORT.md")
         
     except Exception as e:
         print(f"\n❌ Error: {e}")

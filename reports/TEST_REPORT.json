@@ -1,0 +1,150 @@
+{
+  "timestamp": "2026-04-17T19:43:01.254469",
+  "model": "gemma4:e4b",
+  "host": "http://localhost:11434",
+  "tests": [
+    {
+      "test_id": 1,
+      "category": "01 Mobility breakdowns",
+      "user_message": "Bus delayed and is getting dark. My battery is 12%. I need the safest way out or sleep under $10",
+      "routing": {
+        "agent": "CHASKA",
+        "confidence": "HIGH",
+        "reason": "The message primarily expresses immediate safety concerns regarding darkness, low battery, and needing the safest way out, making safety the main priority."
+      },
+      "specialist_response": "Conserve your remaining 12% battery for emergency calls only, and immediately prioritize moving to a well-lit, secure public structure\u2014like a lobby or 24-hour business\u2014to minimize exposure risk. If moving is impossible, remain visible, stay in high-traffic areas, and use the remaining power to call a service that can coordinate a safe, low-cost pickup near your location.",
+      "timing": {
+        "router": 32.77,
+        "specialist": 34.23,
+        "total": 67.01
+      },
+      "analysis": "Router correctly identified CHASKA with HIGH confidence. Specialist provided relevant advice for CHASKA scenario."
+    },
+    {
+      "test_id": 2,
+      "category": "01 Mobility breakdowns",
+      "user_message": "There's a train strike. The taxi is too expensive. I need carpool or local bus alternatives ASAP. I have heavy luggage",
+      "routing": {
+        "agent": "RUMI",
+        "confidence": "HIGH",
+        "reason": "The message discusses a cancelled or disrupted transportation method (train strike) and seeks immediate alternatives (bus, carpool)."
+      },
+      "specialist_response": "**RUMI advises:** Focus immediately on community carpool apps or designated ride-share groups, as they are best suited for heavy luggage and budget constraints. Second, check the local public transit schedule for off-peak, dedicated bus lines which may be less crowded. Finally, if luggage capacity is critical, search for shared van or mini-bus services rather than waiting for individual taxis.",
+      "timing": {
+        "router": 4.73,
+        "specialist": 34.36,
+        "total": 39.09
+      },
+      "analysis": "Router correctly identified RUMI with HIGH confidence. Specialist provided relevant advice for RUMI scenario."
+    },
+    {
+      "test_id": 3,
+      "category": "02 Arrival and accommodation",
+      "user_message": "I landed late and the hostel is closed. I am alone at the airport. Find a safe 24/7 alternative nearby <$20",
+      "routing": {
+        "agent": "TIKA",
+        "confidence": "HIGH",
+        "reason": "The user is seeking alternative accommodation after their planned hostel stay was closed."
+      },
+      "specialist_response": "Since I do not have your specific location, I recommend immediately checking the airport's official information boards or using a ride-share app to find nearby airport-hotel lobbies offering late-night lounge access. For immediate safety and sleep, consider reserving an overnight pod or couch corner at a reliable chain hotel rather than a boarding hostel. Alternatively, search for a recognized, heavily-reviewed safe hostel that advertises 24/7 emergency check-in to maximize your chances of meeting the budget.",
+      "timing": {
+        "router": 30.94,
+        "specialist": 27.3,
+        "total": 58.24
+      },
+      "analysis": "Router correctly identified TIKA with HIGH confidence. Specialist provided relevant advice for TIKA scenario."
+    },
+    {
+      "test_id": 4,
+      "category": "02 Arrival and accommodation",
+      "user_message": "The hostel is abandoned, I have no SIM data and it's raining. Find the nearest walk-in bed with Wi-Fi",
+      "routing": {
+        "agent": "TIKA",
+        "confidence": "HIGH",
+        "reason": "The user is seeking alternative lodging (a bed) because their planned accommodation (the hostel) is abandoned."
+      },
+      "specialist_response": "Your immediate safety is paramount; do not enter the abandoned building. Proceed immediately to the nearest main hotel lobby or public community center, as these locations usually provide Wi-Fi and safe shelter. Staff there can help you secure a temporary bed and guide you to safe, operational accommodation nearby.",
+      "timing": {
+        "router": 21.66,
+        "specialist": 24.29,
+        "total": 45.95
+      },
+      "analysis": "Router correctly identified TIKA with HIGH confidence. Specialist provided relevant advice for TIKA scenario."
+    },
+    {
+      "test_id": 5,
+      "category": "04 Situational risk",
+      "user_message": "The taxi driver refuses the meter and demands double price. I feel unsafe. How do I de-escalate and pay fair?",
+      "routing": {
+        "agent": "RUMI",
+        "confidence": "MEDIUM",
+        "reason": "The message pertains to a problem with the cost and service of a taxi ride, suggesting a transport issue."
+      },
+      "specialist_response": "**RUMI recommends:**\n\n1. **Exit Immediately and Re-enter:** Decline the ride firmly, stating you need a reliable service. Move to a visible, well-populated area.\n2. **Use Ride-Share Apps:** Open a verified app (Uber, Lyft, etc.) to request a ride instantly. These use digital meters and track your trip, eliminating cash negotiation.\n3. **Flag a Taxi Stand:** If available, wait for a legitimate, official taxi queue or stand. This minimizes the risk of individual negotiation.",
+      "timing": {
+        "router": 4.49,
+        "specialist": 13.68,
+        "total": 18.17
+      },
+      "analysis": "Router correctly identified RUMI with MEDIUM confidence. Specialist provided relevant advice for RUMI scenario."
+    },
+    {
+      "test_id": 6,
+      "category": "04 Situational risk",
+      "user_message": "I need an Uber but Wi-Fi needs local SIM for OTP, I'm stuck at terminal. Where is the nearest honest SIM shop?",
+      "routing": {
+        "agent": "GENERAL",
+        "confidence": "HIGH",
+        "reason": "The user is seeking general logistical advice and assistance regarding local services (SIM shops) to facilitate travel planning."
+      },
+      "specialist_response": "Check the main concourse or the ground floor services area; major carriers often have official kiosks there. If you can't find a shop immediately, ask a station employee or use a major convenience store kiosk, as they sometimes sell emergency prepaid data bundles. Alternatively, try linking to the terminal's free public Wi-Fi to communicate with an Uber driver and ask them if they can send the ride details via a phone call instead.",
+      "timing": {
+        "router": 21.92,
+        "specialist": 26.11,
+        "total": 48.03
+      },
+      "analysis": "Router correctly identified GENERAL with HIGH confidence. Specialist provided relevant advice for GENERAL scenario."
+    },
+    {
+      "test_id": 7,
+      "category": "05 Border crossing",
+      "user_message": "At border, the officer needs printed flight proof, but I only have PDF. Where is the nearest printer? Is this a scam?",
+      "routing": {
+        "agent": "AYNI",
+        "confidence": "HIGH",
+        "reason": "The user mentions being at a border and dealing with documentation requirements."
+      },
+      "specialist_response": "While the request for a physical copy is standard border protocol, do not panic: immediately use Google Maps to find nearby FedEx, UPS, or print shops. If physical printing is impossible, politely ask the officer if they can accept the PDF on your device or if an email screenshot is sufficient. This is likely a logistical requirement, not a scam, but always have digital backups ready.",
+      "timing": {
+        "router": 4.44,
+        "specialist": 24.58,
+        "total": 29.01
+      },
+      "analysis": "Router correctly identified AYNI with HIGH confidence. Specialist provided relevant advice for AYNI scenario."
+    },
+    {
+      "test_id": 8,
+      "category": "05 Border crossing",
+      "user_message": "I am at the Cambodia border. The visa is $30 and I only have EUR/Local cash. The exchange rate is a scam. Where's the nearest USD ATM?",
+      "routing": {
+        "agent": "AYNI",
+        "confidence": "HIGH",
+        "reason": "The message concerns documentation, visas, and currency exchange at an international border crossing."
+      },
+      "specialist_response": "For the visa fee, USD cash is mandatory, so skip the border ATM; they may not accept EUR or have low limits. Find a reputable currency exchange shop in the nearest town center for the best rate to convert your EUR. Alternatively, negotiate if the official border agent will accept a direct EUR conversion at a reduced rate for the visa fee.",
+      "timing": {
+        "router": 22.57,
+        "specialist": 30.16,
+        "total": 52.73
+      },
+      "analysis": "Router correctly identified AYNI with HIGH confidence. Specialist provided relevant advice for AYNI scenario."
+    }
+  ],
+  "summary": {
+    "total_tests": 8,
+    "timestamp_end": "2026-04-17T19:48:59.481822",
+    "average_router_time": 17.94,
+    "average_specialist_time": 26.84,
+    "average_total_time": 44.78
+  }
+}

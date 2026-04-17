@@ -2,7 +2,7 @@
 const CONFIG = {
     DEFAULT_HOST: 'http://localhost:11434',
     MODEL: 'gemma4:e4b',
-    SYSTEM_PROMPT_FILE: './systemprompt.txt'
+    SYSTEM_PROMPT_FILE: './prompts/systemprompt.txt'
 };
 
 // State
@@ -75,16 +75,16 @@ async function loadSystemPrompts() {
         }
         
         // Load router prompt
-        const routerResponse = await fetch('./router-prompt.txt');
+        const routerResponse = await fetch('./prompts/router-prompt.txt');
         if (routerResponse.ok) {
             routerPrompt = await routerResponse.text();
             console.log('✓ Router prompt loaded');
         }
         
         // Load specialist prompts
-        const specialists = ['Pre-Prompt.txt', 'Tika.txt', 'Rumi.txt', 'Chaska.txt', 'Ayni.txt'];
+        const specialists = ['Pre-Prompt.txt', 'Tika.txt', 'rumi.txt', 'Chaska.txt', 'ayni.txt'];
         for (const spec of specialists) {
-            const response = await fetch('./' + spec);
+            const response = await fetch('./prompts/' + spec);
             if (response.ok) {
                 specialistPrompts[spec.replace('.txt', '')] = await response.text();
                 console.log(`✓ ${spec} loaded`);
@@ -655,9 +655,9 @@ async function callSpecialist(agentName, userMessage, responseContainer, thinkin
     // Map agent name to specialist prompt
     const agentMap = {
         'TIKA': 'Tika',
-        'RUMI': 'Rumi',
+        'RUMI': 'rumi',
         'CHASKA': 'Chaska',
-        'AYNI': 'Ayni',
+        'AYNI': 'ayni',
         'GENERAL': 'Pre-Prompt'
     };
     
