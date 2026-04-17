@@ -60,7 +60,6 @@ Rules:
 
 Return exactly:
 {{"agent":"RUMI|TIKA|CHASKA|AYNI|GENERAL","confidence":"HIGH|MEDIUM|LOW","reason":"one sentence"}}
-
 Message: "{message}"
 JSON:"""
 
@@ -99,20 +98,38 @@ def call_specialist(agent, message):
     """Stage 2: Call specialized agent (minimal response)"""
     endpoint = f"{OLLAMA_HOST}/api/generate"
     
-    # Map agents to short instructions
-    agent_instructions = {
-        "RUMI": "You are RUMI, transport expert. Provide 2-3 immediate transport alternatives. Be practical.",
-        "TIKA": "You are TIKA, accommodation expert. Provide 2-3 safe nearby options under stated budget.",
-        "CHASKA": "You are CHASKA, risk manager. Assess the safety situation and provide de-escalation tactics.",
-        "AYNI": "You are AYNI, border crossing expert. Verify document requirements and find solutions.",
-        "GENERAL": "You are a helpful travel advisor. Provide practical guidance."
+    agentMap = {
+        'TIKA': 'Tika',
+        'RUMI': 'rumi',
+        'CHASKA': 'Chaska',
+        'AYNI': 'ayni',
+        'GENERAL': 'Pre-Prompt'
     }
     
-    prompt = f"""{agent_instructions.get(agent, agent_instructions['GENERAL'])}
+    specName = agentMap.get(agent, 'Pre-Prompt')
+    
+    import os
+    def load_prompt(name):
+        path = os.path.join("..", "prompts", f"{name}.txt")
+        if os.path.exists(path):
+            with open(path, "r", encoding="utf-8") as f:
+                return f.read()
+        return ""
 
-User query: {message}
+    pre_prompt = load_prompt('Pre-Prompt')
+    specialist_prompt = load_prompt(specName) if agent != 'GENERAL' else ""
 
-Provide a concise, actionable response (2-3 sentences max)."""
+    prompt = ""
+    if pre_prompt:
+        prompt += pre_prompt + "\n\n"
+    if specialist_prompt:
+        prompt += specialist_prompt + "\n\n"
+        
+    prompt += "═══════════════════════════════════════════════════════════════\n"
+    prompt += "CONTEXT\n"
+    prompt += "═══════════════════════════════════════════════════════════════\n\n"
+    prompt += "Connectivity: online\n\n"
+    prompt += f"User: {message}"
 
     try:
         response = requests.post(
@@ -124,12 +141,23 @@ Provide a concise, actionable response (2-3 sentences max)."""
                 "temperature": 0.7,
                 "top_p": 0.9
             },
-            timeout=60
+            timeout=300
         )
         
         if response.status_code == 200:
             result = response.json()
-            return result.get('response', 'No response').strip()
+            raw_response = result.get('response', 'No response').strip()
+            
+            import re
+            cleaned_response = re.sub(r'<think>.*?</think>', '', raw_response, flags=re.DOTALL)
+            cleaned_response = re.sub(r'<thinking>.*?</thinking>', '', cleaned_response, flags=re.DOTALL)
+            
+            if '</thinking>' in cleaned_response:
+                cleaned_response = cleaned_response.split('</thinking>')[-1]
+            if '</think>' in cleaned_response:
+                cleaned_response = cleaned_response.split('</think>')[-1]
+                
+            return cleaned_response.strip()
         else:
             return f"Error: HTTP {response.status_code}"
     except Exception as e:

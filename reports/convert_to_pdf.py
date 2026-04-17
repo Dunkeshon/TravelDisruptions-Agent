@@ -44,7 +44,8 @@ if __name__ == "__main__":
     files_to_convert = [
         "detailed_test_report.md",
         "detailed_test_report_2.md",
-        "system_architecture_overview.md"
+        "system_architecture_overview.md",
+        "TEST_REPORT.md"
     ]
     
     for f in files_to_convert:

@@ -1,0 +1,150 @@
+{
+  "timestamp": "2026-04-17T22:05:24.220329",
+  "model": "gemma4:e4b",
+  "host": "http://localhost:11434",
+  "tests": [
+    {
+      "test_id": 1,
+      "category": "01 Mobility breakdowns",
+      "user_message": "Bus delayed and is getting dark. My battery is 12%. I need the safest way out or sleep under $10",
+      "routing": {
+        "agent": "CHASKA",
+        "confidence": "HIGH",
+        "reason": "The user explicitly mentions needing the safest way out, indicating a safety concern alongside the transport delay."
+      },
+      "specialist_response": "**(Wayra/Chaska Activation)**\n\nThis sounds stressful. Let's handle this quickly. Your safety is the first priority.\n\n### **\u26a0\ufe0f Situational Risk Alert**\n\nIt is late (21:16) and the bus delay increases your vulnerability. Do not wait at the current spot indefinitely. Move toward a brightly lit, staffed area immediately.\n\n### **Action Plan (Convergence)**\n\nWe have two immediate paths. Based on your 12% battery and need for safety, we will prioritize minimizing walking and optimizing resources.\n\n**1. The Immediate Safety Move (Recommended):**\nFind the nearest functioning hotel lobby or major station entrance. Use the building's security or reception desk for light, charge your phone (if possible), and gather reliable transport info.\n\n**2. The Budget Focus:**\nTo sleep under $10, your best bet is a hostel booking that offers a free \"walk-in\" night, or utilizing a low-cost emergency shelter.\n\n***\n\n**Next Steps:**\n\nTo give you the best route, I need one quick confirmation: Are you closer to a major train line, or are you in a smaller, more peripheral street area?\n\nWhile you check your surroundings, here is a two-step process to get you safely sheltered:\n\n**\ud83d\uddc2\ufe0f Operational Checklist: Finding Shelter**\n1. **Signal:** Look for any signs (even dim ones) pointing to a **station, hotel, or supermarket**.\n2. **Walk:** Head directly in that direction. Don't wander. If you see a brightly lit establishment, enter it and ask the attendant if they know of a local, affordable hostel or safe waiting area.",
+      "timing": {
+        "router": 4.62,
+        "specialist": 69.94,
+        "total": 74.55
+      },
+      "analysis": "Router correctly identified CHASKA with HIGH confidence. Specialist provided relevant advice for CHASKA scenario."
+    },
+    {
+      "test_id": 2,
+      "category": "01 Mobility breakdowns",
+      "user_message": "There's a train strike. The taxi is too expensive. I need carpool or local bus alternatives ASAP. I have heavy luggage",
+      "routing": {
+        "agent": "RUMI",
+        "confidence": "HIGH",
+        "reason": "The user reports a train strike and needs alternative modes of transportation (bus/carpool) due to disrupted service."
+      },
+      "specialist_response": "This is frustrating. Let's find the fastest way out.\n\nGiven the time and the heavy luggage, we need a direct route. I've analyzed local options departing from Mendrisio.\n\n**1. Local Bus (Bus 412):**\n*   **Trade-off:** Cheapest, but slowest and may require a transfer.\n*   **Action:** The next bus leaves in 30 minutes. Check the local schedule board for the closest stop; the bus should accommodate luggage but leave little room to maneuver.\n\n**2. Shared Ride/Carpooling App:**\n*   **Trade-off:** Fastest if a match is available now, but reliability is uncertain at this hour.\n*   **Action:** I recommend opening the most established local rideshare app and setting the destination. Filter results by available luggage space.\n\n**3. Backup Plan (Taxis/Private Shuttle):**\n*   **Trade-off:** Expensive, but guarantees immediate pick-up and luggage space.\n*   **Action:** This is your backup if the buses are canceled or the rideshare options fail.\n\n***\n\n**My Recommendation:**\nUse the rideshare app first, as the convenience and speed outweigh the minor cost increase. If you get three connection failures in the next five minutes, switch immediately to the local bus departure.\n\n*I have noted this deviation. When you arrive at your next stop, let me know. I will then check your itinerary against this new arrival time and adjust your plans.*",
+      "timing": {
+        "router": 26.39,
+        "specialist": 56.41,
+        "total": 82.8
+      },
+      "analysis": "Router correctly identified RUMI with HIGH confidence. Specialist provided relevant advice for RUMI scenario."
+    },
+    {
+      "test_id": 3,
+      "category": "02 Arrival and accommodation",
+      "user_message": "I landed late and the hostel is closed. I am alone at the airport. Find a safe 24/7 alternative nearby <$20",
+      "routing": {
+        "agent": "TIKA",
+        "confidence": "HIGH",
+        "reason": "The user is seeking alternative accommodation after finding their initial lodging option (hostel) closed."
+      },
+      "specialist_response": "This is stressful. We will find you somewhere safe to stay.\n\nGiven your late arrival and the immediate need for reliable accommodation, we need to prioritize safety and access over the budget limit for the first night.\n\nI have filtered for options near Mendrisio Dacd that are operational right now.\n\n**Primary Recommendation (Safety First):**\nI recommend checking into the *Hotel [Placeholder Name]* (proximity: 5 min walk). While the rate is slightly over budget tonight, it guarantees 24/7 staff presence and immediate access to security. This is the most reliable option when you are alone late at night.\n\n**Alternative (Budget Focus):**\nIf budget is paramount, the *[Hostel Alternative B]* is the closest viable option that usually accepts late check-ins. We should confirm their staff shift hours immediately.\n\n***\n\n**Immediate Action Checklist:**\n\n1.  **Confirm Status:** Use the attached contact information to call the *Hotel [Placeholder Name]* immediately. Confirm the emergency late check-in procedure and available rate tonight.\n2.  **Review:** Use the Wayra app map function to confirm the nearest ATM/secure cash location to your chosen site.\n3.  **Next Steps:** Once checked in, I can re-route your search for budget options for the following nights.",
+      "timing": {
+        "router": 28.31,
+        "specialist": 59.37,
+        "total": 87.67
+      },
+      "analysis": "Router correctly identified TIKA with HIGH confidence. Specialist provided relevant advice for TIKA scenario."
+    },
+    {
+      "test_id": 4,
+      "category": "02 Arrival and accommodation",
+      "user_message": "The hostel is abandoned, I have no SIM data and it's raining. Find the nearest walk-in bed with Wi-Fi",
+      "routing": {
+        "agent": "TIKA",
+        "confidence": "HIGH",
+        "reason": "The user is discussing accommodation issues and searching for a place to stay with amenities."
+      },
+      "specialist_response": "***(Visual signal: Amber/Amber flashing)***\n\nThis is stressful. Take a breath. We need to move right now.\n\nThe priority is warmth, safety, and connectivity. Forget the booking for now. Here is the plan:\n\n**Action Checklist: Immediate Shelter**\n\n1.  **Exit Location:** Move 100 meters away from the abandoned building and walk toward the main street (Hauptstra\u00dfe).\n2.  **Check Public Spaces:** Look immediately for a nearby caf\u00e9, library, or 24-hour shop. They are the most likely places to have reliable Wi-Fi and shelter from the rain while we find a place.\n3.  **Find Alternatives:** Since hostels are out, we pivot immediately. Based on your proximity and budget, these are your 2 best options right now:\n\n| Option | Type | Summary | Notes |\n| :--- | :--- | :--- | :--- |\n| **Hotel X** | Budget Hotel | Lowest available rate; requires walking 10 minutes. | Guaranteed Wi-Fi and immediate check-in (cash preferred). |\n| **AirBnB/Private Room** | Short Stay Rental | Nearest option, 5 minutes walk; requires booking confirmation. | Highest probability of available linens and quick access. |\n| **Municipal Shelter** | Emergency/Fallback | Located 15 minutes walk; best only if weather degrades severely. | Call the local tourism office (number posted in the caf\u00e9) for verification. |\n\n**Recommendation:** Go to the nearest active caf\u00e9 or shop first. Use their Wi-Fi to cross-reference the Hotel X availability and secure a booking there. Don't try to find a room until you are warm and connected.",
+      "timing": {
+        "router": 4.41,
+        "specialist": 58.13,
+        "total": 62.54
+      },
+      "analysis": "Router correctly identified TIKA with HIGH confidence. Specialist provided relevant advice for TIKA scenario."
+    },
+    {
+      "test_id": 5,
+      "category": "04 Situational risk",
+      "user_message": "The taxi driver refuses the meter and demands double price. I feel unsafe. How do I de-escalate and pay fair?",
+      "routing": {
+        "agent": "CHASKA",
+        "confidence": "HIGH",
+        "reason": "The user explicitly states feeling unsafe, making the core concern a personal safety risk requiring advice."
+      },
+      "specialist_response": "(Wayra signals a color shift to amber, indicating time-sensitive action is needed.)\n\nThis is stressful. We need to bypass the negotiation and focus on getting you to safety first. **Do not argue over the money right now.** Your priority is leaving the vehicle.\n\n***\n\n### \u26a0\ufe0f Chaska Read: Situational Risk\nThe risk here is high. Dealing with an aggressive overcharge in a late-night setting increases conflict potential. It is safer to walk away from the immediate situation than to try to resolve the fare on the spot.\n\n### \ud83d\udfe2 Immediate Action Plan\n\n1.  **Decline the ride.** Firmly but calmly state, \"No, thank you. I will find another taxi.\" Do not engage in a discussion about the meter or the price.\n2.  **Exit the car** and move immediately toward a well-lit, populated area (a corner store, a street entrance, or a nearby transit stop).\n3.  **Stay on the phone** while you walk to ground yourself.\n\n### \ud83d\ude8c Best Alternatives (Convergent Solutions)\n\nYou need a reliable booking mechanism that bypasses cash negotiation.\n\n*   **Option 1: Official Taxi App (Recommended).** Use a trusted local app (like the specific operator in Mendrisio) or a major service like Uber/FreeNow. Book the ride through the app so the meter and cost are tracked and guaranteed.\n*   **Option 2: On-Site Taxi Rank.** Walk a short distance to a designated, official taxi stand. These services are usually regulated and less likely to engage in disputes.\n\nI am tracking the best real-time estimates for local, verified transport services. Which app do you have installed? I will guide you through the booking process.",
+      "timing": {
+        "router": 31.18,
+        "specialist": 56.94,
+        "total": 88.12
+      },
+      "analysis": "Router correctly identified CHASKA with HIGH confidence. Specialist provided relevant advice for CHASKA scenario."
+    },
+    {
+      "test_id": 6,
+      "category": "04 Situational risk",
+      "user_message": "I need an Uber but Wi-Fi needs local SIM for OTP, I'm stuck at terminal. Where is the nearest honest SIM shop?",
+      "routing": {
+        "agent": "GENERAL",
+        "confidence": "HIGH",
+        "reason": "The user is seeking general local advice regarding necessary services (SIM card) to complete a plan (booking an Uber)."
+      },
+      "specialist_response": "**(Visual Signal: Amber)**\n\nThis is stressful. We need to get you moving quickly.\n\nDo not leave the terminal yet. Before you hunt for a SIM shop, check these options first, as they are faster:\n\n1. **Terminal WiFi:** Check for any open public charging points or information desks within the main concourse. They sometimes offer temporary hotspot access that can get you past the OTP hurdle.\n2. **Alternative Booking:** Try calling the local taxi dispatch directly, rather than using the Uber app. This bypasses the need for Wi-Fi/data validation.\n3. **The Nearest Shop (If all else fails):** The most reliable provider near Mendrisio is likely a local Vodafone or Swisscom kiosk. Given the time, the closest location that might still be open until 9 PM is the store near the main tram stop entrance, just across the street from the exit.\n\nFocus on the terminal's resources first. If those fail, switch to calling a taxi instead of waiting for a data connection.",
+      "timing": {
+        "router": 4.8,
+        "specialist": 54.7,
+        "total": 59.5
+      },
+      "analysis": "Router correctly identified GENERAL with HIGH confidence. Specialist provided relevant advice for GENERAL scenario."
+    },
+    {
+      "test_id": 7,
+      "category": "05 Border crossing",
+      "user_message": "At border, the officer needs printed flight proof, but I only have PDF. Where is the nearest printer? Is this a scam?",
+      "routing": {
+        "agent": "AYNI",
+        "confidence": "HIGH",
+        "reason": "The message directly references being 'At border' and concerns necessary travel documents and documentation procedures."
+      },
+      "specialist_response": "This is stressful. Take a breath. The request for proof is standard at border points, so I advise against thinking it's a scam. This is a procedural requirement.\n\nWe need to find a printer fast.\n\n**1. Action: Print the document.**\nGiven the time (21:16), public services will be closing.\n\n*   **Immediate Search:** Check the lobby or notice board of the nearest major train station (e.g., the central station in Mendrisio). These often house vending-machine-style printers or basic print kiosks.\n*   **Hotel/Business Center:** If there is a major hotel nearby, call the front desk and ask if they have a guest business center or if they can quickly print a single page for a small fee.\n*   **Alternative:** If you cannot print immediately, ask the officer if a clear screenshot of the PDF, viewed on your current phone, will suffice while you resolve the physical printout.\n\n**2. Fallback Plan (If printing is impossible):**\nIf all options fail and the officer insists on a physical copy, calmly ask them, \"Is there a local official who can sign a printed slip confirming that my PDF proof of flight is acceptable today?\" This shifts the burden back to the official, leveraging their authority rather than fighting the process.\n\nFocus on the closest train station first. We need to find a kiosk or a nearby lobby attendant immediately.",
+      "timing": {
+        "router": 23.22,
+        "specialist": 53.92,
+        "total": 77.15
+      },
+      "analysis": "Router correctly identified AYNI with HIGH confidence. Specialist provided relevant advice for AYNI scenario."
+    },
+    {
+      "test_id": 8,
+      "category": "05 Border crossing",
+      "user_message": "I am at the Cambodia border. The visa is $30 and I only have EUR/Local cash. The exchange rate is a scam. Where's the nearest USD ATM?",
+      "routing": {
+        "agent": "AYNI",
+        "confidence": "HIGH",
+        "reason": "The user is discussing visa requirements, currency exchange, and accessing funds at a national border crossing."
+      },
+      "specialist_response": "This is stressful. Take a breath. Dealing with currency at a border can feel impossible, but we will handle this in steps.\n\nRight at the border crossing, reliable ATMs, especially those accepting foreign cards for USD, are not guaranteed. We need to pivot from \"ATM machine\" to \"Official Exchange.\"\n\nHere are your best paths for getting the necessary USD without falling into a bad deal.\n\n***\n\n### \u2699\ufe0f Action Plan: Currency Exchange\n\n**1. The Primary Goal: Find an Official Bank or Exchange Office**\nDo not rely on street vendors. Walk away from the immediate border line and look for a clearly marked, licensed bank or dedicated foreign currency exchange service (usually located in the main town square, not right at the gate).\n\n**2. Your Best Strategy (Using EUR/Local Cash):**\nYour most secure route is to find a bank and exchange your EUR or local cash *for USD* at their established rate.\n*   **Best:** Banks or large, reputable hotels often have secure exchange services.\n*   **Avoid:** Any exchange service that operates out of a small, unmarked storefront.\n\n**3. If No Exchange is Visible (Fallback):**\nIf you cannot find a bank or official exchange house within a 15-minute walk, try one of these:\n*   **Taxi/Tuk-Tuk Driver:** Ask the driver to take you to a known, central bank (e.g., *The Asia Bank* or a major commercial bank).\n*   **Accommodation Check:** If you are staying in a major hotel or guesthouse, ask the front desk. They can point you directly to the nearest, most trusted exchange point.\n\n**Crucial Tip:** When you get there, ask for the exchange rate *before* handing over your money. If the rate seems suspicious, do not proceed.\n\n***\n**Next Step:** Tell me which direction you are facing right now (down the road, towards the main town center, etc.). I can find the nearest reliable financial institution for you.",
+      "timing": {
+        "router": 27.81,
+        "specialist": 67.35,
+        "total": 95.17
+      },
+      "analysis": "Router correctly identified AYNI with HIGH confidence. Specialist provided relevant advice for AYNI scenario."
+    }
+  ],
+  "summary": {
+    "total_tests": 8,
+    "timestamp_end": "2026-04-17T22:15:51.717448",
+    "average_router_time": 18.84,
+    "average_specialist_time": 59.59,
+    "average_total_time": 78.44
+  }
+}
