@@ -1,0 +1,112 @@
+EXECUTION FLOW — How Router + Specialists Work Together
+
+User Input
+   ↓
+[Stage 1: Core Router]
+  - Analyze intent
+  - Check trip memory + live context
+  - Classify scenario
+  - Output: JSON routing decision + confidence
+   ↓
+  [If LOW confidence]
+  → Ask clarifying question, return to user
+  → User responds → Re-route
+   ↓
+[If HIGH or MEDIUM confidence → Route to specialist]
+   ↓
+[Stage 2: Load Specialist]
+  - Load Pre-Prompt.txt (Wayra identity + core reasoning)
+  - Load specialist prompt (Tika.txt | Rumi.txt | Chaska.txt | Ayni.txt)
+  - Combine with routed context
+  - Append user message
+   ↓
+[Invoke LLM with combined prompt]
+   ↓
+[Specialist Execution]
+  - Analyze with domain expertise
+  - Surface 2-3 concrete options (if alternative selection needed)
+  - Recommend one
+  - Return action or suggestion
+   ↓
+[Update Trip Memory]
+  - Budget change? → store
+  - Itinerary change? → store
+  - Preference learned? → store
+  - Decision made? → log it
+   ↓
+[Return to User + Sidebar Context]
+  - Show specialist response
+  - Update visible trip state (budget, itinerary, alerts)
+  - Stay ready for next input
+
+═══════════════════════════════════════════════════════════════
+
+APP.JS INTEGRATION (Conceptual)
+
+async function handleUserMessage(message) {
+  // Stage 1: Router
+  const routingDecision = await callLLM(
+    systemPrompt: router-prompt.txt,
+    userMessage: message,
+    context: { liveContext, tripMemory }
+  );
+  
+  // Check confidence
+  if (routingDecision.confidence === 'LOW') {
+    displayClarifyingQuestion(routingDecision.note);
+    return; // wait for user response
+  }
+  
+  // Stage 2: Load specialist + invoke
+  const specialistPrompt = 
+    readFile('Pre-Prompt.txt') + 
+    readFile(getSpecialistFile(routingDecision.routing_agent)) +
+    `\n\nContext: ${JSON.stringify(tripMemory)}\n` +
+    `User Message: ${message}`;
+  
+  const specialistResponse = await callLLM(
+    systemPrompt: specialistPrompt,
+    userMessage: message
+  );
+  
+  // Update memory
+  updateTripMemory(routingDecision.trip_update);
+  
+  // Display result
+  displayResponse(specialistResponse);
+}
+
+═══════════════════════════════════════════════════════════════
+
+TRIP MEMORY STRUCTURE (Persistent)
+
+{
+  trip_id: "uuid",
+  destinations: [
+    { name: "Lyon", eta: "2026-04-20", status: "planned" },
+    { name: "Barcelona", eta: "2026-04-25", status: "upcoming" }
+  ],
+  budget: {
+    remaining_eur: 450,
+    daily_burn: 45,
+    learned_preferences: ["hostels under €20", "central location"]
+  },
+  preferences: {
+    transport_mode: "buses" | "trains",
+    accommodation_type: "hostel" | "guesthouse",
+    risk_tolerance: "moderate"
+  },
+  decisions: [
+    { date: "2026-04-17", scenario: "mobility", action: "rebooked bus", outcome: "ontime" },
+    { date: "2026-04-16", scenario: "accommodation", action: "switched hostel", outcome: "good" }
+  ]
+}
+
+═══════════════════════════════════════════════════════════════
+
+Keys to Success:
+1. Router always runs first. Never skip it.
+2. Trip memory is passed to both router and specialist.
+3. Specialist is fully autonomous — doesn't ask for context.
+4. After every specialist response, update trip memory.
+5. All execution is on-device (APIs are optional, not required).

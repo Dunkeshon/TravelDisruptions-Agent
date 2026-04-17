@@ -8,10 +8,29 @@ const CONFIG = {
 // State
 let conversationHistory = [];
 let systemPrompt = '';
+let routerPrompt = '';
+let specialistPrompts = {};
 let isLoading = false;
 let userLocation = null;
 let batteryLevel = 0;
 let networkStatus = 'online';
+
+// Trip Memory State
+let tripMemory = {
+    trip_id: Date.now().toString(),
+    destinations: [],
+    budget: { remaining_eur: 0, daily_burn: 0, learned_preferences: [] },
+    preferences: { transport_mode: 'any', accommodation_type: 'hostel', risk_tolerance: 'moderate' },
+    decisions: []
+};
+
+// Live Context State
+let liveContext = {
+    location: null,
+    time: new Date(),
+    weather: null,
+    connectivity: navigator.onLine ? 'online' : 'offline'
+};
 
 // DOM Elements
 const messagesArea = document.getElementById('messagesArea');
@@ -23,7 +42,8 @@ const ollamaHostInput = document.getElementById('ollamaHost');
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     loadConfiguration();
-    loadSystemPrompt();
+    loadSystemPrompts();
+    loadTripMemory();
     attachEventListeners();
     initializeSensors();
     showWelcomeMessage();
@@ -42,18 +62,46 @@ function saveConfiguration() {
     localStorage.setItem('ollamaHost', ollamaHostInput.value);
 }
 
-async function loadSystemPrompt() {
+async function loadSystemPrompts() {
     try {
-        const response = await fetch(CONFIG.SYSTEM_PROMPT_FILE);
-        if (response.ok) {
-            systemPrompt = await response.text();
-            console.log('System prompt loaded');
+        // Load main system prompt
+        const systemResponse = await fetch(CONFIG.SYSTEM_PROMPT_FILE);
+        if (systemResponse.ok) {
+            systemPrompt = await systemResponse.text();
+            console.log('✓ System prompt loaded');
+        }
+        
+        // Load router prompt
+        const routerResponse = await fetch('./router-prompt.txt');
+        if (routerResponse.ok) {
+            routerPrompt = await routerResponse.text();
+            console.log('✓ Router prompt loaded');
+        }
+        
+        // Load specialist prompts
+        const specialists = ['Pre-Prompt.txt', 'Tika.txt', 'Rumi.txt', 'Chaska.txt', 'Ayni.txt'];
+        for (const spec of specialists) {
+            const response = await fetch('./' + spec);
+            if (response.ok) {
+                specialistPrompts[spec.replace('.txt', '')] = await response.text();
+                console.log(`✓ ${spec} loaded`);
+            }
         }
     } catch (error) {
-        console.warn('Could not load system prompt from file:', error);
-        console.log('You can paste the system prompt in the browser console:');
-        console.log('window.systemPrompt = "<your-prompt-here>"');
+        console.warn('Could not load all prompts:', error);
     }
+}
+
+function loadTripMemory() {
+    const saved = localStorage.getItem('tripMemory');
+    if (saved) {
+        tripMemory = JSON.parse(saved);
+        console.log('✓ Trip memory loaded:', tripMemory);
+    }
+}
+
+function saveTripMemory() {
+    localStorage.setItem('tripMemory', JSON.stringify(tripMemory));
 }
 
 function attachEventListeners() {
@@ -70,6 +118,11 @@ function attachEventListeners() {
 
 // Initialize phone sensors
 function initializeSensors() {
+    // Update live context
+    liveContext.time = new Date();
+    liveContext.location = userLocation;
+    liveContext.connectivity = navigator.onLine ? 'online' : 'offline';
+    
     // Request geolocation
     if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
@@ -79,6 +132,7 @@ function initializeSensors() {
                     lng: position.coords.longitude,
                     accuracy: position.coords.accuracy
                 };
+                liveContext.location = userLocation;
                 console.log('Location acquired:', userLocation);
                 updateHeaderStatus();
             },
@@ -175,8 +229,12 @@ async function sendMessage() {
     if (!message || isLoading) return;
 
     saveConfiguration();
+    
+    // Update live context
+    liveContext.time = new Date();
+    liveContext.connectivity = navigator.onLine ? 'online' : 'offline';
 
-    // Add user message
+    // Add user message to UI
     const timestamp = new Date().toLocaleTimeString('en-US', { 
         hour: '2-digit', 
         minute: '2-digit',
@@ -198,31 +256,64 @@ async function sendMessage() {
     scrollToBottom();
 
     try {
+        // STAGE 1: Call the Core Router
+        console.log('🔄 [Stage 1] Routing message...');
+        const routingDecision = await callRouter(message);
+        
+        if (!routingDecision) {
+            throw new Error('Router failed to process message');
+        }
+        
+        console.log('📊 Routing decision:', routingDecision);
+        
+        // Check confidence
+        if (routingDecision.confidence === 'LOW') {
+            typingIndicator.style.display = 'none';
+            const clarifyTimestamp = new Date().toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: true 
+            });
+            addMessage('system', `I'm not quite sure. Can you tell me more? (${routingDecision.reason})`, clarifyTimestamp);
+            isLoading = false;
+            return;
+        }
+        
+        // STAGE 2: Call the appropriate specialist
+        const agent = routingDecision.routing_agent || routingDecision.agent;
+        console.log(`🎯 [Stage 2] Invoking specialist: ${agent}`);
+        
         const responseTimestamp = new Date().toLocaleTimeString('en-US', { 
             hour: '2-digit', 
             minute: '2-digit',
             hour12: true 
         });
-
-        // Create a thinking message that we'll update as the response streams
+        
         const thinkingMessageEl = createThinkingMessage(responseTimestamp);
         const responseContainer = thinkingMessageEl.querySelector('.thinking-response-container');
         const thinkingIndicator = thinkingMessageEl.querySelector('.thinking-indicator');
         
-        const fullResponse = await generateResponse(message, responseContainer, thinkingIndicator);
+        const fullResponse = await callSpecialist(
+            agent,
+            message,
+            responseContainer,
+            thinkingIndicator
+        );
         
         // Hide typing indicator
         typingIndicator.style.display = 'none';
         
-        // Process the complete response for thinking blocks
+        // Process the complete response
         processCompleteResponse(thinkingMessageEl, fullResponse);
-        
         scrollToBottom();
         
         conversationHistory.push({
             role: 'assistant',
             content: fullResponse
         });
+        
+        // Save trip memory after successful specialist response
+        saveTripMemory();
         
     } catch (error) {
         typingIndicator.style.display = 'none';
@@ -404,6 +495,267 @@ async function generateResponse(userMessage, responseContainer, thinkingIndicato
             throw new Error(`Cannot connect to Ollama at ${host}. Make sure Ollama is running and the host is correct.\n\nDetails: ${error.message}`);
         }
         throw error;
+    }
+}
+
+// STAGE 1: Core Router Agent (Lightweight)
+async function callRouter(userMessage) {
+    const host = ollamaHostInput.value.trim() || CONFIG.DEFAULT_HOST;
+    const endpoint = `${host}/api/generate`;
+
+    // MINIMAL router prompt - just the essential rules
+    let prompt = `You are a routing agent. Classify this user message and return ONLY valid JSON.
+
+Rules:
+- RUMI: transport/bus/train/taxi/ride cancelled, missed, delayed, stranded
+- TIKA: no place to stay, booking failed, accommodation, hostel search  
+- CHASKA: area/route safe?, danger, risk, safety concern
+- AYNI: border, visa, customs, passport, documents, crossing
+- GENERAL: planning, advice, other
+
+Return exactly:
+{"agent":"RUMI|TIKA|CHASKA|AYNI|GENERAL","confidence":"HIGH|MEDIUM|LOW","reason":"one sentence"}
+
+Message: "${userMessage}"
+JSON:`;
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: CONFIG.MODEL,
+                prompt: prompt,
+                stream: false,
+                temperature: 0.2,
+                top_p: 0.95,
+            }),
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            console.error('Router HTTP error:', errText);
+            return null;
+        }
+
+        const result = await response.json();
+        const responseText = result.response.trim();
+        
+        // Extract JSON from response
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+            console.warn('Could not extract JSON:', responseText);
+            // Fallback routing based on keywords
+            if (userMessage.toLowerCase().includes('train') || userMessage.toLowerCase().includes('bus') || userMessage.toLowerCase().includes('taxi')) {
+                return { agent: 'RUMI', confidence: 'MEDIUM', reason: 'Transport keyword detected' };
+            }
+            if (userMessage.toLowerCase().includes('stay') || userMessage.toLowerCase().includes('hostel') || userMessage.toLowerCase().includes('hotel')) {
+                return { agent: 'TIKA', confidence: 'MEDIUM', reason: 'Accommodation keyword detected' };
+            }
+            if (userMessage.toLowerCase().includes('safe') || userMessage.toLowerCase().includes('danger')) {
+                return { agent: 'CHASKA', confidence: 'MEDIUM', reason: 'Safety keyword detected' };
+            }
+            return { agent: 'GENERAL', confidence: 'MEDIUM', reason: 'Default routing' };
+        }
+        
+        const routing = JSON.parse(jsonMatch[0]);
+        routing.routing_agent = routing.agent; // Map to our naming convention
+        routing.trip_update = null; // No trip update in simple routing
+        return routing;
+    } catch (error) {
+        console.error('Router call failed:', error);
+        return { agent: 'GENERAL', confidence: 'LOW', reason: 'Router error - defaulting to general' };
+    }
+}
+
+// STAGE 2: Specialist Agent Execution (Optimized)
+async function callSpecialist(agentName, userMessage, responseContainer, thinkingIndicator) {
+    const host = ollamaHostInput.value.trim() || CONFIG.DEFAULT_HOST;
+    const endpoint = `${host}/api/generate`;
+
+    // Map agent name to specialist prompt
+    const agentMap = {
+        'TIKA': 'Tika',
+        'RUMI': 'Rumi',
+        'CHASKA': 'Chaska',
+        'AYNI': 'Ayni',
+        'GENERAL': 'Pre-Prompt'
+    };
+    
+    const specName = agentMap[agentName] || 'Pre-Prompt';
+    const specialistPrompt = specialistPrompts[specName] || '';
+
+    // Build minimal specialist prompt
+    let prompt = '';
+    
+    // Add Pre-Prompt (shared identity)
+    if (specialistPrompts['Pre-Prompt']) {
+        prompt += specialistPrompts['Pre-Prompt'] + '\n\n';
+    }
+    
+    // Add specialist-specific prompt if not GENERAL
+    if (agentName !== 'GENERAL' && specialistPrompts[specName]) {
+        prompt += specialistPrompts[specName] + '\n\n';
+    }
+    
+    // Add minimal context
+    prompt += '═══════════════════════════════════════════════════════════════\n';
+    prompt += 'CONTEXT\n';
+    prompt += '═══════════════════════════════════════════════════════════════\n\n';
+    
+    if (tripMemory.destinations.length > 0) {
+        prompt += `Trip Destinations: ${tripMemory.destinations.map(d => d.name).join(' → ')}\n`;
+    }
+    if (tripMemory.budget.remaining_eur > 0) {
+        prompt += `Budget: €${tripMemory.budget.remaining_eur} remaining\n`;
+    }
+    
+    // Last 2 messages only
+    const recentMsgs = conversationHistory.slice(-2);
+    if (recentMsgs.length > 0) {
+        prompt += '\nRecent Messages:\n';
+        recentMsgs.forEach(msg => {
+            prompt += `${msg.role}: ${msg.content.substring(0, 100)}\n`;
+        });
+    }
+    
+    prompt += `\nUser: ${userMessage}`;
+
+    let fullResponse = '';
+    let thinkingContent = '';
+    let isInThinking = false;
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                model: CONFIG.MODEL,
+                prompt: prompt,
+                stream: true,
+                temperature: 0.7,
+                top_p: 0.9,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+        }
+
+        // Stream response
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            
+            for (let i = 0; i < lines.length - 1; i++) {
+                const line = lines[i].trim();
+                if (line) {
+                    try {
+                        const data = JSON.parse(line);
+                        if (data.response) {
+                            const token = data.response;
+                            fullResponse += token;
+
+                            if (token.includes('<thinking>')) {
+                                isInThinking = true;
+                                thinkingContent = '';
+                                if (thinkingIndicator) {
+                                    thinkingIndicator.style.display = 'flex';
+                                }
+                            }
+                            
+                            if (isInThinking) {
+                                thinkingContent += token;
+                                const thinkingText = thinkingContent
+                                    .replace(/<thinking>/g, '')
+                                    .replace(/<\/thinking>/g, '')
+                                    .trim();
+                                
+                                if (thinkingText.length > 0) {
+                                    responseContainer.textContent = '💭 ' + thinkingText.substring(0, 150);
+                                    responseContainer.style.opacity = '0.7';
+                                    responseContainer.style.fontStyle = 'italic';
+                                }
+                            }
+                            
+                            if (token.includes('</thinking>')) {
+                                isInThinking = false;
+                            }
+
+                            if (!isInThinking && thinkingContent && fullResponse.includes('</thinking>')) {
+                                const mainContent = fullResponse.split('</thinking>').pop().trim();
+                                if (mainContent.length > 0) {
+                                    responseContainer.style.opacity = '1';
+                                    responseContainer.style.fontStyle = 'normal';
+                                    if (typeof marked !== 'undefined') {
+                                        responseContainer.innerHTML = marked.parse(mainContent);
+                                    } else {
+                                        responseContainer.textContent = mainContent;
+                                    }
+                                }
+                            } else if (!isInThinking && !thinkingContent) {
+                                responseContainer.style.opacity = '1';
+                                responseContainer.style.fontStyle = 'normal';
+                                if (typeof marked !== 'undefined') {
+                                    responseContainer.innerHTML = marked.parse(fullResponse);
+                                } else {
+                                    responseContainer.textContent = fullResponse;
+                                }
+                            }
+
+                            scrollToBottom();
+                        }
+                    } catch (e) {
+                        // Skip invalid JSON
+                    }
+                }
+            }
+            
+            buffer = lines[lines.length - 1];
+        }
+
+        if (buffer.trim()) {
+            try {
+                const data = JSON.parse(buffer);
+                if (data.response) {
+                    fullResponse += data.response;
+                }
+            } catch (e) {}
+        }
+
+        if (!fullResponse) {
+            throw new Error('No response from specialist');
+        }
+
+        return fullResponse;
+    } catch (error) {
+        console.error('Specialist call failed:', error);
+        throw error;
+    }
+}
+
+// Trip Memory Management
+function updateTripMemoryFromRouter(update) {
+    if (!update) return;
+    
+    if (update.revised_destination) {
+        tripMemory.destinations = tripMemory.destinations.filter(d => d.status !== 'current');
+        tripMemory.destinations.push({
+            name: update.revised_destination,
+            eta: new Date().toISOString(),
+            status: 'current'
+        });
+    }
+    
+    if (update.eta_pressure) {
+        console.log(`⚠️ Time pressure: ${update.eta_pressure}`);
     }
 }
 
